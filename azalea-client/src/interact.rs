@@ -8,7 +8,7 @@ use azalea_core::{
     position::{BlockPos, Vec3},
 };
 use azalea_entity::{
-    clamp_look_direction, view_vector, Attributes, EyeHeight, LocalEntity, LookDirection, Position,
+    attributes::AlreadyPresentError, clamp_look_direction, view_vector, Attributes, EyeHeight, LocalEntity, LookDirection, Position
 };
 use azalea_inventory::{ItemSlot, ItemSlotData};
 use azalea_physics::clip::{BlockShapeType, ClipContext, FluidPickType};
@@ -363,11 +363,12 @@ fn update_modifiers_for_held_item(
             Item::Trident => -2.9,
             _ => 0.,
         };
-        attributes
+        if attributes
             .attack_speed
             .insert(azalea_entity::attributes::base_attack_speed_modifier(
                 added_attack_speed,
-            ))
-            .unwrap();
+            )).is_err() {
+                println!("[Qweru's azalea patch] WARN: Ignored error at azalea-cleint/src/interact.rs:370, attributes are already present.")
+        }
     }
 }
